@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app.dart';
+import 'core/di/app_dependencies.dart';
 import 'data/app_state.dart';
 
 Future<void> main() async {
@@ -12,7 +13,8 @@ Future<void> main() async {
   GoogleFonts.config.allowRuntimeFetching = true;
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  final state = AppState();
+  final dependencies = AppDependencies.create();
+  final state = AppState(session: dependencies.session);
   await state.init();
   runApp(BusinessGenieApp(state: state));
 }

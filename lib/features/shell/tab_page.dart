@@ -8,7 +8,6 @@ import '../../core/widgets/parts.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/states.dart';
 import '../../data/app_state.dart';
-import '../../data/companies.dart' show ownerPhoto;
 import '../../data/models.dart';
 import '../profile/profile_sheet.dart';
 
@@ -56,7 +55,8 @@ class GTabPage extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: GType.h1.c(g.ink).copyWith(fontSize: 24, fontWeight: FontWeight.w600, letterSpacing: -.6),
                               ),
-                              if (subtitle != null) Text(subtitle!, maxLines: 1, overflow: TextOverflow.ellipsis, style: GType.caption.c(g.ink3)),
+                              if (subtitle != null)
+                                Text(subtitle!, maxLines: 1, overflow: TextOverflow.ellipsis, style: GType.caption.c(g.ink3)),
                             ],
                           ),
                     ),
@@ -88,7 +88,7 @@ class MeButton extends StatelessWidget {
       scale: .9,
       semanticLabel: 'You, profile and settings',
       onTap: () => openProfile(context),
-      child: GAvatar(name: name, size: 38, strong: true, photo: ownerPhoto),
+      child: GAvatar(name: name, size: 38, strong: true, photo: context.app.photo),
     );
   }
 }

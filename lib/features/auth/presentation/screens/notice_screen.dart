@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
-import '../../core/theme/palette.dart';
-import '../../core/theme/tokens.dart';
-import '../../core/theme/type.dart';
-import '../../core/widgets/buttons.dart';
-import '../../core/widgets/parts.dart';
-import '../../data/app_state.dart';
+import '../../../../core/theme/palette.dart';
+import '../../../../core/theme/tokens.dart';
+import '../../../../core/theme/type.dart';
+import '../../../../core/widgets/buttons.dart';
+import '../../../../core/widgets/parts.dart';
+import '../../../../data/app_state.dart';
 
 /// Shown once, on first sign-in: what Business Genie keeps and why. The
 /// person accepts before going on.
@@ -19,7 +19,11 @@ class NoticeScreen extends StatelessWidget {
     const points = [
       (LucideIcons.building2, 'Your company plan', 'Goals, milestones and departments, so Genie can show where the company stands.'),
       (LucideIcons.listChecks, 'Your work', 'Tasks, meetings and decisions, so your day is in one place.'),
-      (LucideIcons.lock, 'Private stays private', 'Tasks marked “Only me” are seen by you alone. Not by your heads, not by Genie’s summaries for others.'),
+      (
+        LucideIcons.lock,
+        'Private stays private',
+        'Tasks marked “Only me” are seen by you alone. Not by your heads, not by Genie’s summaries for others.',
+      ),
       (LucideIcons.hand, 'You decide', 'Genie drafts. Nothing is sent, approved or published until you press the button.'),
     ];
     return Scaffold(

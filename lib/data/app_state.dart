@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../features/auth/presentation/controllers/session_controller.dart';
 import 'companies.dart';
 import 'models.dart';
 import 'sample_data.dart';
@@ -44,10 +47,31 @@ enum HomeSection {
 /// the owner's Home layout. Changes to the snapshot are optimistic: the
 /// screen updates at once.
 class AppState extends ChangeNotifier {
+  AppState({required this.session}) {
+    session.addListener(_onSessionChanged);
+  }
+
+  /// Sign-in state; this class only reacts to it.
+  final SessionController session;
+
   SharedPreferences? _prefs;
 
   bool ready = false;
-  bool signedIn = false;
+
+  bool get signedIn => session.isSignedIn;
+  bool get demo => session.isDemo;
+  bool get setupPending => session.isWorkspaceSetupPending;
+
+  /// Signed in with a real account (not the demo).
+  bool get live => session.isRealAccount;
+
+  /// The profile photo: the sample portrait in the demo, none for a real
+  /// account until the API serves one.
+  String? get photo => demo ? ownerPhoto : null;
+
+  /// The company line under its name.
+  String get industry => live ? (session.organization?.industry ?? '') : companies[company.clamp(0, companies.length - 1)].industry;
+
   bool noticeAccepted = false;
   ThemeMode themeMode = ThemeMode.system;
   DataMode mode = DataMode.full;
@@ -68,7 +92,6 @@ class AppState extends ChangeNotifier {
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
     final p = _prefs!;
-    signedIn = p.getBool('signedIn.v1') ?? false;
     noticeAccepted = p.getBool('notice.v1') ?? false;
     themeMode = ThemeMode.values[(p.getInt('theme.v1') ?? 0).clamp(0, 2)];
     mode = DataMode.values[(p.getInt('mode.v1') ?? 0).clamp(0, DataMode.values.length - 1)];
@@ -78,9 +101,38 @@ class AppState extends ChangeNotifier {
       sections = [...parsed, ...HomeSection.values.where((s) => !parsed.contains(s))];
     }
     hidden.addAll([for (final n in p.getStringList('home.hidden.v7') ?? const <String>[]) ...HomeSection.values.where((s) => s.name == n)]);
+    await session.restore();
     ready = true;
     notifyListeners();
-    if (signedIn) load();
+    if (signedIn && !setupPending) load();
+    if (live) unawaited(session.refresh());
+  }
+
+  /// Keeps the sample data in step with sign-in: cleared on sign-out,
+  /// loaded once signed in, and shown for the real person and company.
+  void _onSessionChanged() {
+    if (!signedIn) {
+      data = null;
+      runningTaskId = null;
+      runningSince = null;
+    } else if (!setupPending && data == null && !loading && ready) {
+      load();
+    } else {
+      _showSignedInAccount();
+    }
+    notifyListeners();
+  }
+
+  /// Puts the real person and company on the sample data.
+  void _showSignedInAccount() {
+    final user = session.user;
+    final snapshot = data;
+    if (!live || user == null || snapshot == null) return;
+    final companyName = session.organization?.name ?? '';
+    data = snapshot.withOwner(
+      Person(id: snapshot.owner.id, name: user.displayName, role: user.roleLabel, dept: snapshot.owner.dept, email: user.email),
+      companyName.isEmpty ? 'Your company' : companyName,
+    );
   }
 
   Future<void> load() async {
@@ -89,6 +141,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
     try {
       data = await GenieData.load(mode, company);
+      _showSignedInAccount();
     } on LoadError catch (e) {
       data = null;
       error = e.message;
@@ -121,26 +174,14 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void signIn() {
-    signedIn = true;
-    _prefs?.setBool('signedIn.v1', true);
-    notifyListeners();
-    load();
-  }
-
   void acceptNotice() {
     noticeAccepted = true;
     _prefs?.setBool('notice.v1', true);
     notifyListeners();
   }
 
-  void signOut() {
-    signedIn = false;
-    data = null;
-    runningTaskId = null;
-    _prefs?.setBool('signedIn.v1', false);
-    notifyListeners();
-  }
+  /// Signs out (or leaves the demo) on this phone.
+  void signOut() => session.signOut();
 
   void setSections(List<HomeSection> order) {
     sections = order;
@@ -303,4 +344,8 @@ class AppScope extends InheritedNotifier<AppState> {
 extension AppStateContext on BuildContext {
   AppState get app => AppScope.of(this);
   AppState get appRead => AppScope.read(this);
+
+  /// Sign-in state, for the auth screens.
+  SessionController get session => AppScope.of(this).session;
+  SessionController get sessionRead => AppScope.read(this).session;
 }

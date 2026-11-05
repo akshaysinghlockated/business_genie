@@ -55,28 +55,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 scale: .92,
                 semanticLabel: 'You, profile and settings',
                 onTap: () => openProfile(context),
-                child: GAvatar(name: data?.owner.name ?? 'Nikhil Bansal', size: 50, strong: true, photo: ownerPhoto),
+                child: GAvatar(name: data?.owner.name ?? 'Nikhil Bansal', size: 50, strong: true, photo: context.app.photo),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: GPressable(
                   scale: .98,
-                  semanticLabel: 'Company: $company, ${info.industry}. Switch company',
-                  onTap: () => _showCompanies(context),
+                  semanticLabel: context.app.live ? 'Company: $company' : 'Company: $company, ${info.industry}. Switch company',
+                  onTap: context.app.live ? null : () => _showCompanies(context),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
                           Flexible(
-                            child: Text(company, maxLines: 1, overflow: TextOverflow.ellipsis, style: GType.h3.c(g.ink).copyWith(fontSize: 18.5)),
+                            child: Text(
+                              company,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GType.h3.c(g.ink).copyWith(fontSize: 18.5),
+                            ),
                           ),
-                          const SizedBox(width: 2),
-                          Icon(LucideIcons.chevronDown, size: 16, color: g.ink3),
+                          if (!context.app.live) ...[const SizedBox(width: 2), Icon(LucideIcons.chevronDown, size: 16, color: g.ink3)],
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(info.industry, maxLines: 1, overflow: TextOverflow.ellipsis, style: GType.caption.c(g.ink3).copyWith(fontSize: 12)),
+                      Text(
+                        context.app.industry,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GType.caption.c(g.ink3).copyWith(fontSize: 12),
+                      ),
                     ],
                   ),
                 ),
@@ -220,7 +229,10 @@ class _Bell extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: g.ground, width: 2),
                   ),
-                  child: Text(unread > 9 ? '9+' : '$unread', style: GType.micro.c(Colors.white).copyWith(fontSize: 10, height: 1, letterSpacing: 0)),
+                  child: Text(
+                    unread > 9 ? '9+' : '$unread',
+                    style: GType.micro.c(Colors.white).copyWith(fontSize: 10, height: 1, letterSpacing: 0),
+                  ),
                 ),
               ),
           ],
@@ -366,7 +378,10 @@ void _showCustomise(BuildContext context) {
             const GSheetHeader(title: 'Customise home'),
             Padding(
               padding: const EdgeInsets.fromLTRB(_m, 0, _m, 8),
-              child: Text('The highlight always leads. Drag sections into the order you want, or switch one off.', style: GType.bodyS.c(g.ink3)),
+              child: Text(
+                'The highlight always leads. Drag sections into the order you want, or switch one off.',
+                style: GType.bodyS.c(g.ink3),
+              ),
             ),
             ReorderableListView(
               shrinkWrap: true,

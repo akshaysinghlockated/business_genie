@@ -2,10 +2,10 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 
-import '../../core/theme/palette.dart';
-import '../../core/theme/tokens.dart';
-import '../../core/theme/type.dart';
-import '../../core/widgets/genie_mark.dart';
+import '../../../../core/theme/palette.dart';
+import '../../../../core/theme/tokens.dart';
+import '../../../../core/theme/type.dart';
+import '../../../../core/widgets/genie_mark.dart';
 
 /// The launch moment: the mark springs in from 0.55 scale out of a soft
 /// blur, then the wordmark rises. About 1.4 s, and instant under reduced motion.
@@ -69,7 +69,10 @@ class _GSplashState extends State<GSplash> with SingleTickerProviderStateMixin {
                   child: Transform.scale(
                     scale: .55 + .45 * mark.value,
                     child: ImageFiltered(
-                      imageFilter: ImageFilter.blur(sigmaX: ((1 - mark.value) * 14).clamp(0, 14), sigmaY: ((1 - mark.value) * 14).clamp(0, 14)),
+                      imageFilter: ImageFilter.blur(
+                        sigmaX: ((1 - mark.value) * 14).clamp(0, 14),
+                        sigmaY: ((1 - mark.value) * 14).clamp(0, 14),
+                      ),
                       child: const GenieMark(size: 88),
                     ),
                   ),

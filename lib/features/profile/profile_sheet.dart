@@ -60,7 +60,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Expanded(
                       child: Center(child: Text('Account', style: GType.h3.c(g.ink))),
                     ),
-                    _TopButton(icon: LucideIcons.pencil, label: 'Edit profile', onTap: () => showWebOnly(context, 'Profile', LucideIcons.pencil)),
+                    _TopButton(
+                      icon: LucideIcons.pencil,
+                      label: 'Edit profile',
+                      onTap: () => showWebOnly(context, 'Profile', LucideIcons.pencil),
+                    ),
                   ],
                 ),
               ),
@@ -74,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        GAvatar(name: name, size: 104, strong: true, photo: ownerPhoto),
+                        GAvatar(name: name, size: 104, strong: true, photo: app.photo),
                         Positioned(
                           right: 2,
                           bottom: 4,
@@ -114,7 +118,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(color: g.card, borderRadius: BorderRadius.circular(14)),
-                      child: Text('${owner?.role ?? info.role} · ${data?.company ?? info.name}', style: GType.caption.c(g.ink2).w(FontWeight.w600)),
+                      child: Text(
+                        '${owner?.role ?? info.role} · ${data?.company ?? info.name}',
+                        style: GType.caption.c(g.ink2).w(FontWeight.w600),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -155,7 +162,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24),
-                        gradient: const LinearGradient(colors: [Color(0xFF7C5CFF), Color(0xFF3579D7)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF7C5CFF), Color(0xFF3579D7)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,46 +221,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
 
                   // Companies.
-                  _Label('Your companies'),
-                  _Group(
-                    children: [
-                      for (var i = 0; i < companies.length; i++)
-                        GPressable(
-                          scale: .985,
-                          semanticLabel: companies[i].name,
-                          onTap: () {
-                            if (i == app.company) return;
-                            app.setCompany(i);
-                            GToast.show(context, 'Opened ${companies[i].name}', type: GToastType.info);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(color: i == app.company ? g.ink : g.card, borderRadius: BorderRadius.circular(12)),
-                                  child: Text(companies[i].initials, style: GType.label.c(i == app.company ? g.onInk : g.ink).w(FontWeight.w700)),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(companies[i].name, style: GType.title.c(g.ink)),
-                                      Text('${companies[i].role} · ${companies[i].people} people', style: GType.caption.c(g.ink3)),
-                                    ],
+                  if (app.demo) ...[
+                    _Label('Your companies'),
+                    _Group(
+                      children: [
+                        for (var i = 0; i < companies.length; i++)
+                          GPressable(
+                            scale: .985,
+                            semanticLabel: companies[i].name,
+                            onTap: () {
+                              if (i == app.company) return;
+                              app.setCompany(i);
+                              GToast.show(context, 'Opened ${companies[i].name}', type: GToastType.info);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: i == app.company ? g.ink : g.card,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      companies[i].initials,
+                                      style: GType.label.c(i == app.company ? g.onInk : g.ink).w(FontWeight.w700),
+                                    ),
                                   ),
-                                ),
-                                if (i == app.company) Icon(LucideIcons.check, size: 20, color: g.accent),
-                              ],
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(companies[i].name, style: GType.title.c(g.ink)),
+                                        Text('${companies[i].role} · ${companies[i].people} people', style: GType.caption.c(g.ink3)),
+                                      ],
+                                    ),
+                                  ),
+                                  if (i == app.company) Icon(LucideIcons.check, size: 20, color: g.accent),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
 
                   // Display and demo data.
                   _Label('Display'),
@@ -282,7 +301,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         sub: 'Quiet 9 pm – 7 am',
                         onTap: () => showWebOnly(context, 'Notification settings', LucideIcons.bell),
                       ),
-                      _Row(icon: LucideIcons.fileText, title: 'Business plan', onTap: () => showWebOnly(context, 'Business plan', LucideIcons.fileText)),
+                      _Row(
+                        icon: LucideIcons.fileText,
+                        title: 'Business plan',
+                        onTap: () => showWebOnly(context, 'Business plan', LucideIcons.fileText),
+                      ),
                       _Row(icon: LucideIcons.phone, title: 'Phone', trailing: owner?.phone ?? '', onTap: null),
                       _Row(
                         icon: LucideIcons.circleQuestionMark,
@@ -296,7 +319,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       _Row(
                         icon: LucideIcons.logOut,
-                        title: 'Sign out',
+                        title: app.demo ? 'Leave the demo' : 'Sign out',
                         danger: true,
                         onTap: () {
                           final app = context.appRead;
@@ -307,7 +330,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  Center(child: Text('Business Genie · demo 0.1.0', style: GType.caption.c(g.ink3))),
+                  Center(child: Text(app.demo ? 'Business Genie · demo 0.1.0' : 'Business Genie 0.1.0', style: GType.caption.c(g.ink3))),
                 ],
               ),
             ),

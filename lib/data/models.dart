@@ -86,7 +86,14 @@ class Goal {
 }
 
 class Milestone {
-  const Milestone({required this.name, required this.week, required this.weeks, required this.progress, required this.krs, required this.stage});
+  const Milestone({
+    required this.name,
+    required this.week,
+    required this.weeks,
+    required this.progress,
+    required this.krs,
+    required this.stage,
+  });
 
   final String name;
   final int week, weeks;
@@ -367,6 +374,29 @@ class Snapshot {
   final List<Project> projects;
   final List<NewsItem> news;
   final List<Suggestion> suggestions;
+
+  /// The same company data, shown for the signed-in person and company.
+  Snapshot withOwner(Person owner, String company) => Snapshot(
+    company: company,
+    owner: owner,
+    vision: vision,
+    milestone: milestone,
+    targets: targets,
+    goals: goals,
+    decisions: decisions,
+    tasks: tasks,
+    meetings: meetings,
+    people: people,
+    inbox: inbox,
+    departments: departments,
+    setupDone: setupDone,
+    activity: activity,
+    revenue: revenue,
+    doneThisWeek: doneThisWeek,
+    projects: projects,
+    news: news,
+    suggestions: suggestions,
+  );
 
   Project? project(String id) => projects.where((p) => p.id == id).firstOrNull;
 

@@ -5,9 +5,10 @@ import 'core/theme/palette.dart';
 import 'core/theme/theme.dart';
 import 'core/theme/tokens.dart';
 import 'data/app_state.dart';
-import 'features/auth/notice_screen.dart';
-import 'features/auth/sign_in_screen.dart';
-import 'features/auth/splash.dart';
+import 'features/auth/presentation/screens/notice_screen.dart';
+import 'features/auth/presentation/screens/setup_on_web_screen.dart';
+import 'features/auth/presentation/screens/sign_in_screen.dart';
+import 'features/auth/presentation/screens/splash_screen.dart';
 import 'features/shell/shell.dart';
 
 class BusinessGenieApp extends StatelessWidget {
@@ -60,6 +61,9 @@ class _RootState extends State<_Root> {
     } else if (!app.signedIn) {
       page = const SignInScreen();
       id = 'signin';
+    } else if (app.setupPending) {
+      page = const SetupOnWebScreen();
+      id = 'setup';
     } else if (!app.noticeAccepted) {
       page = const NoticeScreen();
       id = 'notice';
